@@ -195,18 +195,20 @@
     }
     
     [self.inAppBrowserViewController navigateTo:url];
-    
-    if (!browserOptions.hidden) {
-       [self show:nil withAnimation:!browserOptions.disableAnimation];
-    }
+    [self show:nil withNoAnimate:browserOptions.hidden];
 }
 
 - (void)show:(CDVInvokedUrlCommand*)command{
-    [self show:command withAnimation:YES];
+    [self show:command withNoAnimate:NO];
 }
 
-- (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated
+- (void)show:(CDVInvokedUrlCommand*)command withNoAnimate:(BOOL)noAnimate
 {
+    BOOL initHidden = NO;
+    if(command == nil && noAnimate == YES){
+        initHidden = YES;
+    }
+    
     if (self.inAppBrowserViewController == nil) {
         NSLog(@"Tried to show IAB after it was closed.");
         return;
@@ -246,7 +248,7 @@
             if(!initHidden || osVersion < 11){
             [tmpWindow makeKeyAndVisible];
             }
-            [tmpController presentViewController:nav animated:animated completion:nil];
+            [tmpController presentViewController:nav animated:!noAnimate completion:nil];
         }
     });
 }
@@ -917,9 +919,9 @@ BOOL isExiting = FALSE;
     dispatch_async(dispatch_get_main_queue(), ^{
         isExiting = TRUE;
         if ([weakSelf respondsToSelector:@selector(presentingViewController)]) {
-            [[weakSelf presentingViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
+            [[weakSelf presentingViewController] dismissViewControllerAnimated:YES completion:nil];
         } else {
-            [[weakSelf parentViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
+            [[weakSelf parentViewController] dismissViewControllerAnimated:YES completion:nil];
         }
     });
 }
@@ -1148,7 +1150,6 @@ BOOL isExiting = FALSE;
         self.hidenavigationbuttons = NO;
         self.closebuttoncolor = nil;
         self.toolbarcolor = nil;
-    	self.disableAnimation = NO;
         self.toolbartranslucent = YES;
     }
     
