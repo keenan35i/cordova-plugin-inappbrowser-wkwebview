@@ -195,20 +195,18 @@
     }
     
     [self.inAppBrowserViewController navigateTo:url];
-    [self show:nil withNoAnimate:browserOptions.hidden];
+    
+    if (!browserOptions.hidden) {
+       [self show:nil withAnimation:!browserOptions.disableAnimation];
+    }
 }
 
 - (void)show:(CDVInvokedUrlCommand*)command{
-    [self show:command withNoAnimate:NO];
+    [self show:command withAnimation:YES];
 }
 
-- (void)show:(CDVInvokedUrlCommand*)command withNoAnimate:(BOOL)noAnimate
+- (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated
 {
-    BOOL initHidden = NO;
-    if(command == nil && noAnimate == YES){
-        initHidden = YES;
-    }
-    
     if (self.inAppBrowserViewController == nil) {
         NSLog(@"Tried to show IAB after it was closed.");
         return;
@@ -248,7 +246,7 @@
             if(!initHidden || osVersion < 11){
             [tmpWindow makeKeyAndVisible];
             }
-            [tmpController presentViewController:nav animated:!noAnimate completion:nil];
+            [tmpController presentViewController:nav animated:animated completion:nil];
         }
     });
 }
