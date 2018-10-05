@@ -917,9 +917,9 @@ BOOL isExiting = FALSE;
     dispatch_async(dispatch_get_main_queue(), ^{
         isExiting = TRUE;
         if ([weakSelf respondsToSelector:@selector(presentingViewController)]) {
-            [[weakSelf presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+            [[weakSelf presentingViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
         } else {
-            [[weakSelf parentViewController] dismissViewControllerAnimated:YES completion:nil];
+            [[weakSelf parentViewController] dismissViewControllerAnimated:!_browserOptions.disableAnimation completion:nil];
         }
     });
 }
@@ -1148,6 +1148,7 @@ BOOL isExiting = FALSE;
         self.hidenavigationbuttons = NO;
         self.closebuttoncolor = nil;
         self.toolbarcolor = nil;
+    	self.disableAnimation = NO;
         self.toolbartranslucent = YES;
     }
     
